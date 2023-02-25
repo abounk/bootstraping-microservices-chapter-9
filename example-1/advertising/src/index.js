@@ -1,50 +1,44 @@
 const express = require("express");
-const mongodb = require("mongodb");
 const bodyParser = require("body-parser");
-
-//
-// Connect to the database.
-//
-function connectDb() {
-    return mongodb.MongoClient.connect(DBHOST) 
-        .then(client => {
-            return client.db(DBNAME);
-        });
-}
-
-
+const fs = require('fs');
+const csvtojson = require('csvtojson');
 //
 // Setup event handlers.
 //
-function setupHandlers(app, db) {
+function setupHandlers(app) {
 
-    const advertisementsCollection = db.collection("advertisements");
-
-    //
-    // HTTP GET API to retrieve video viewing history.
-    //
+    // Read the CSV file and convert it to a JSON object
+    // const csv = fs.readFileSync("ads.csv")
+    
     app.get("/advertisement", (req, res) => {
-        advertisementsCollection.aggregate({ $sample: { size: 1 } })
-            .toArray()
-            .then(advertisement => {
-                res.json({ advertisement });
-            })
-            .catch(err => {
-                console.error("Failed to get advertisements collection.");
-                console.error(err);
-                res.sendStatus(500);
-            });
+        // var num = Math.floor(Math.random() * Object.keys(dict).length)
+        // let data = advertisement[num]
+        // res.json({ data });
+
+
+        // csvtojson().fromFile("ads.csv").then((data) => {
+        // // Select a random item from the JSON object
+        // const randomIndex = Math.floor(Math.random() * data.length);
+        // const randomItem = data[randomIndex];
+        let data = {
+            "name": "Agoda",
+            "url": "www.agoda.com"
+        }
+        res.json({ data })
+        // }).catch((err) => {
+        //     console.error(err);
+        // });
     });
 }
 
 //
 // Start the HTTP server.
 //
-function startHttpServer(db) {
+function startHttpServer() {
     return new Promise(resolve => { // Wrap in a promise so we can be notified when the server has started.
         const app = express();
         app.use(bodyParser.json()); // Enable JSON body for HTTP requests.
-        setupHandlers(app, db);
+        setupHandlers(app);
 
         const port = process.env.PORT && parseInt(process.env.PORT) || 3000;
         app.listen(port, () => {
@@ -57,10 +51,7 @@ function startHttpServer(db) {
 // Application entry point.
 //
 function main() {
-    return connectDb()                                          // Connect to the database...
-        .then(db => {                                           // then...
-            return startHttpServer(db); // start the HTTP server.
-        });
+    return startHttpServer()
 }
 
 main()

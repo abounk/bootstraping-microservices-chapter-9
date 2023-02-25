@@ -41,6 +41,22 @@
                     {{/if}}
                 </div>
             </div>
+
+            <div class="advertisement">
+                <h1>Advertising:</h1>
+                <div>
+                {{#if advertisement}}
+                        {{#each advertisement}}
+                            <div class="mt-1">
+                                <a href="{{this.url}}">{{this.name}}</a>
+                            </div>
+                        {{/each}}
+                    {{else}}
+                        No Ads.
+                    {{/if}}
+                </div>
+                {{!-- <a href={{advertisement.url}}>Advertising: {{advertisement.name}}</h3> --}}
+            </div>
         </div>
     </body>
 </html>
